@@ -4,6 +4,7 @@ import com.sudria.demo.application.AnimalDto;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,5 +44,27 @@ public class AnimalDao {
 
   public void deleteAnimals(Long id) {
     zooRepository.delete(zooRepository.findById(id).get());
+  }
+
+  public void updateAnimal(AnimalDto animalDto) {
+    zooRepository.save(AnimalEntity
+        .builder()
+        .id(animalDto.getId())
+        .name(animalDto.getName())
+        .age(animalDto.getAge())
+        .category(animalDto.getCategory())
+        .build());
+  }
+
+  public AnimalDto findAnimal(Long id) throws NotFoundException {
+    return mapToDto(zooRepository.findById(id).orElseThrow(NotFoundException::new));
+  }
+
+  private AnimalDto mapToDto(AnimalEntity animalEntity) {
+    return AnimalDto.builder()
+    .id(animalEntity.getId())
+        .name(animalEntity.getName())
+        .category(animalEntity.getCategory())
+        .build();
   }
 }
