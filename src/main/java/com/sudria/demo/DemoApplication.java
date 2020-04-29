@@ -1,15 +1,47 @@
 package com.sudria.demo;
 
+import com.sudria.demo.infrastructure.AnimalEntity;
+import com.sudria.demo.infrastructure.ZooRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@Slf4j
 @SpringBootApplication
-public class DemoApplication {
+public class DemoApplication implements CommandLineRunner {
 
-	public static void main(String[] args) {
+  @Autowired
+  private ZooRepository zooRepository;
 
-		SpringApplication.run(DemoApplication.class, args);
-		System.out.println("Hello SUDRIA !");
-	}
+  public DemoApplication(ZooRepository zooRepository) {
+    this.zooRepository = zooRepository;
+  }
+
+
+  public static void main(String[] args) {
+
+    SpringApplication.run(DemoApplication.class, args);
+    System.out.println("Hello SUDRIA !");
+
+
+  }
+
+  @Override
+  public void run(String... args) {
+
+    log.info("StartApplication...");
+
+    this.zooRepository
+        .save(
+            AnimalEntity
+                .builder()
+                .id(1L)
+                .name("Garfield")
+                .age(5)
+                .category("DOMESTIC")
+                .build());
+  }
 
 }

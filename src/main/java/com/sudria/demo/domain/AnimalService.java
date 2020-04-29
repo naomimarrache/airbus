@@ -1,20 +1,28 @@
 package com.sudria.demo.domain;
 
-import com.sudria.demo.infrastructure.ZooRepository;
+import com.sudria.demo.application.AnimalDto;
+import com.sudria.demo.infrastructure.AnimalDao;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AnimalService {
 
-  private ZooRepository zooRepository;
+  private AnimalDao animalDao;
 
-  public AnimalService(ZooRepository zooRepository) {
-    this.zooRepository = zooRepository;
+  public AnimalService(AnimalDao animalDao) {
+    this.animalDao = animalDao;
   }
 
-  public List<String> getAnimals() {
-    return zooRepository.getAnnimals();
+  public List<AnimalDto> getAnimals() {
+    return animalDao.findAnimals();
   }
 
+  public void addAnimal(AnimalDto animalDto) {
+    animalDao.createAnimal(animalDto);
+  }
+
+  public void deleteAnimals(Long id) {
+    animalDao.deleteAnimals(id);
+  }
 }
