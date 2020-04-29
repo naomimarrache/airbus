@@ -19,8 +19,8 @@ public class AnimalService {
     return animalDao.findAnimals();
   }
 
-  public void addAnimal(AnimalDto animalDto) {
-    animalDao.createAnimal(animalDto);
+  public AnimalDto addAnimal(AnimalDto animalDto) {
+    return animalDao.createAnimal(animalDto);
   }
 
   public void deleteAnimals(Long id) {
@@ -33,5 +33,9 @@ public class AnimalService {
 
   public AnimalDto findAnimal(Long id) throws NotFoundException {
    return  animalDao.findAnimal(id);
+  }
+
+  public AnimalDto replaceAnimal(AnimalDto animalDto) {
+    return animalDao.replaceAnimal(animalDto);
   }
 }

@@ -44,16 +44,25 @@ public class Controller {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
   })
   @RequestMapping(value = "/animals", method = RequestMethod.GET)
-  public ResponseEntity<List<AnimalDto>> animals() {
+  public ResponseEntity<List<AnimalDto>> getAnimals() {
     return new ResponseEntity<>(animalService.getAnimals(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/animals", method = RequestMethod.POST)
-  public ResponseEntity<AnimalDto> animals(
+  public ResponseEntity<AnimalDto> createAnimals(
       @ApiParam(value = "Animal object store in database table", required = true)
       @RequestBody AnimalDto animalDto) {
     animalService.addAnimal(animalDto);
     return new ResponseEntity<AnimalDto>(animalDto, HttpStatus.CREATED);
+  }
+
+  @RequestMapping(value = "/animals/{id}", method = RequestMethod.PUT)
+  public ResponseEntity<AnimalDto> replaceAnimals(
+      @PathVariable(value = "id") Long id,
+      @RequestBody AnimalDto animalDto) {
+    animalDto.setId(id);
+    animalService.replaceAnimal(animalDto);
+    return new ResponseEntity<AnimalDto>(animalDto, HttpStatus.OK);
   }
 
 

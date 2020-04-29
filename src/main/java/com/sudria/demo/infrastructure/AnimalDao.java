@@ -18,28 +18,12 @@ public class AnimalDao {
 
   public List<AnimalDto> findAnimals() {
     return StreamSupport.stream(zooRepository.findAll().spliterator(), false)
-        .map(animalEntitie -> AnimalDto
-            .builder()
-            .id(animalEntitie.getId())
-            .name(animalEntitie.getName())
-            .age(animalEntitie.getAge())
-            .category(animalEntitie.getCategory())
-            .build()
-        )
-        .collect(Collectors.toList())
-        ;
+        .map(animalEntitie -> buildDto(animalEntitie))
+        .collect(Collectors.toList());
   }
 
-  public void createAnimal(AnimalDto animalDto) {
-    zooRepository
-        .save(
-            AnimalEntity
-                .builder()
-                .id(animalDto.getId())
-                .name(animalDto.getName())
-                .age(animalDto.getAge())
-                .category(animalDto.getCategory())
-                .build());
+  public AnimalDto createAnimal(AnimalDto animalDto) {
+    return buildDto(zooRepository.save(buildEntity(animalDto)));
   }
 
   public void deleteAnimals(Long id) {
@@ -47,24 +31,36 @@ public class AnimalDao {
   }
 
   public void updateAnimal(AnimalDto animalDto) {
-    zooRepository.save(AnimalEntity
+    zooRepository.save(buildEntity(animalDto));
+  }
+
+
+  public AnimalDto findAnimal(Long id) throws NotFoundException {
+    return buildDto(zooRepository.findById(id).orElseThrow(NotFoundException::new));
+  }
+
+  public AnimalDto replaceAnimal(AnimalDto animalDto) {
+    return buildDto(zooRepository.save(buildEntity(animalDto)));
+  }
+
+  private AnimalEntity buildEntity(AnimalDto animalDto) {
+    return AnimalEntity
         .builder()
         .id(animalDto.getId())
         .name(animalDto.getName())
         .age(animalDto.getAge())
         .category(animalDto.getCategory())
-        .build());
+        .build();
   }
 
-  public AnimalDto findAnimal(Long id) throws NotFoundException {
-    return mapToDto(zooRepository.findById(id).orElseThrow(NotFoundException::new));
-  }
-
-  private AnimalDto mapToDto(AnimalEntity animalEntity) {
+  private AnimalDto buildDto(AnimalEntity animalEntity) {
     return AnimalDto.builder()
-    .id(animalEntity.getId())
+        .id(animalEntity.getId())
         .name(animalEntity.getName())
+        .age(animalEntity.getAge())
         .category(animalEntity.getCategory())
         .build();
   }
+
+
 }

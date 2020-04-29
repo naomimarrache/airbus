@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @ApiModel(description = "All details about the Animal")
@@ -18,6 +19,7 @@ import lombok.ToString;
 @Builder
 public class AnimalDto  implements Serializable {
 
+  @Setter
   private Long id;
   private String name;
   private int age;
