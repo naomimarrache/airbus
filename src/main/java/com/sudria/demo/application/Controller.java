@@ -53,7 +53,7 @@ public class Controller {
       @ApiParam(value = "Animal object store in database table", required = true)
       @RequestBody AnimalDto animalDto) {
     animalService.addAnimal(animalDto);
-    return new ResponseEntity<AnimalDto>(animalDto, HttpStatus.CREATED);
+    return new ResponseEntity<>(animalDto, HttpStatus.CREATED);
   }
 
   @RequestMapping(value = "/animals/{id}", method = RequestMethod.PUT)
@@ -62,28 +62,28 @@ public class Controller {
       @RequestBody AnimalDto animalDto) {
     animalDto.setId(id);
     animalService.replaceAnimal(animalDto);
-    return new ResponseEntity<AnimalDto>(animalDto, HttpStatus.OK);
+    return new ResponseEntity<>(animalDto, HttpStatus.OK);
   }
 
 
   @RequestMapping(value = "/animals/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<AnimalDto> deleteAnimals(@PathVariable(value = "id") Long id) {
     animalService.deleteAnimals(id);
-    return new ResponseEntity<AnimalDto>(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/animals/{id}", method = RequestMethod.PATCH, consumes = "application/json-patch+json")
-  public ResponseEntity<AnimalDto> patchAnimals(@PathVariable(value = "id") Long id,
-      @RequestBody JsonPatch patch) throws JsonPatchException, JsonProcessingException {
-    AnimalDto animalDto = null;
+  public ResponseEntity<String> patchAnimals(
+      @PathVariable(value = "id") Long id,
+      @RequestBody JsonPatch patch)  {
     try {
-      animalDto = animalService.findAnimal(id);
+      animalService.patchAnimals(applyPatchToCustomer(patch, animalService.findAnimal(id)));
+      return new ResponseEntity<>(HttpStatus.OK);
     } catch (NotFoundException e) {
-      return new ResponseEntity<AnimalDto>(animalDto, HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    } catch (JsonPatchException | JsonProcessingException e) {
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    AnimalDto animalDtoPatched = applyPatchToCustomer(patch, animalDto);
-    animalService.patchAnimals(animalDtoPatched);
-    return new ResponseEntity<AnimalDto>(HttpStatus.OK);
   }
 
   private AnimalDto applyPatchToCustomer(JsonPatch patch, AnimalDto targetAnimal)
