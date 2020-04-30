@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -46,6 +47,15 @@ public class Controller {
   @RequestMapping(value = "/animals", method = RequestMethod.GET)
   public ResponseEntity<List<AnimalDto>> getAnimals() {
     return new ResponseEntity<>(animalService.getAnimals(), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/animals/{id}", method = RequestMethod.GET)
+  public ResponseEntity<AnimalDto> getAnimalsById( @PathVariable(value = "id") Long id) {
+    try {
+      return new ResponseEntity<>(animalService.getAnimals(id), HttpStatus.OK);
+    } catch (NotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal Not Found", e);
+    }
   }
 
   @RequestMapping(value = "/animals", method = RequestMethod.POST)

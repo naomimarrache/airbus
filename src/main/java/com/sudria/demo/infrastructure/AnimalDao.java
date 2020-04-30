@@ -22,7 +22,11 @@ public class AnimalDao {
         .collect(Collectors.toList());
   }
 
-  public AnimalDto createAnimal(AnimalDto animalDto) {
+  public AnimalDto findAnimals(Long id) throws NotFoundException {
+    return buildDto(zooRepository.findById(id).orElseThrow(NotFoundException::new));
+  }
+
+  public AnimalDto createAnimals(AnimalDto animalDto) {
     return buildDto(zooRepository.save(buildEntity(animalDto)));
   }
 
@@ -32,11 +36,6 @@ public class AnimalDao {
 
   public void updateAnimal(AnimalDto animalDto) {
     zooRepository.save(buildEntity(animalDto));
-  }
-
-
-  public AnimalDto findAnimal(Long id) throws NotFoundException {
-    return buildDto(zooRepository.findById(id).orElseThrow(NotFoundException::new));
   }
 
   public AnimalDto replaceAnimal(AnimalDto animalDto) {
