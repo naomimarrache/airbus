@@ -19,29 +19,33 @@ public class DemoApplication implements CommandLineRunner {
     this.zooRepository = zooRepository;
   }
 
-
   public static void main(String[] args) {
 
     SpringApplication.run(DemoApplication.class, args);
     System.out.println("Hello SUDRIA !");
-
-
   }
 
   @Override
   public void run(String... args) {
 
-    log.info("StartApplication...");
+    log.info("Data initilisation...");
+    this.zooRepository.save(
+        AnimalEntity
+            .builder()
+            .id(1L)
+            .name("Garfield")
+            .age(5)
+            .category("FELINE")
+            .build());
 
-    this.zooRepository
-        .save(
-            AnimalEntity
-                .builder()
-                .id(1L)
-                .name("Garfield")
-                .age(5)
-                .category("DOMESTIC")
-                .build());
+    this.zooRepository.save(
+        AnimalEntity
+            .builder()
+            .id(2L)
+            .name("Nemo")
+            .age(1)
+            .category("FISCH")
+            .build());
   }
 
 }
