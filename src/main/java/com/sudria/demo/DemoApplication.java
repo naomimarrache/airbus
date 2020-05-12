@@ -29,22 +29,18 @@ public class DemoApplication implements CommandLineRunner {
   public void run(String... args) {
 
     log.info("Data initilisation...");
-    this.zooRepository.save(
-        AnimalEntity
-            .builder()
-            .id(1L)
-            .name("Garfield")
-            .age(5)
-            .category("FELINE")
-            .build());
+    saveAnimal(1L, "Garfield", 5, "FELINE");
+    saveAnimal(2L, "Nemo", 1, "FISCH");
+  }
 
+  private void saveAnimal(long id, String name, int age, String category) {
     this.zooRepository.save(
         AnimalEntity
             .builder()
-            .id(2L)
-            .name("Nemo")
-            .age(1)
-            .category("FISCH")
+            .id(id)
+            .name(name)
+            .age(age)
+            .category(category)
             .build());
   }
 
