@@ -1,6 +1,6 @@
 package com.sudria.demo.infrastructure;
 
-import com.sudria.demo.application.AnimalDto;
+import com.sudria.demo.domain.Animal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -16,44 +16,44 @@ public class AnimalDao {
     this.zooRepository = zooRepository;
   }
 
-  public List<AnimalDto> findAnimals() {
+  public List<Animal> findAnimals() {
     return StreamSupport.stream(zooRepository.findAll().spliterator(), false)
-        .map(animalEntitie -> buildDto(animalEntitie))
+        .map(animalEntitie -> buildAnimal(animalEntitie))
         .collect(Collectors.toList());
   }
 
-  public AnimalDto findAnimals(Long id) throws NotFoundException {
-    return buildDto(zooRepository.findById(id).orElseThrow(NotFoundException::new));
+  public Animal findAnimals(Long id) throws NotFoundException {
+    return buildAnimal(zooRepository.findById(id).orElseThrow(NotFoundException::new));
   }
 
-  public AnimalDto createAnimals(AnimalDto animalDto) {
-    return buildDto(zooRepository.save(buildEntity(animalDto)));
+  public Animal createAnimals(Animal animal) {
+    return buildAnimal(zooRepository.save(buildEntity(animal)));
   }
 
   public void deleteAnimals(Long id) {
     zooRepository.delete(zooRepository.findById(id).get());
   }
 
-  public void updateAnimal(AnimalDto animalDto) {
-    zooRepository.save(buildEntity(animalDto));
+  public void updateAnimal(Animal animal) {
+    zooRepository.save(buildEntity(animal));
   }
 
-  public AnimalDto replaceAnimal(AnimalDto animalDto) {
-    return buildDto(zooRepository.save(buildEntity(animalDto)));
+  public Animal replaceAnimal(Animal animal) {
+    return buildAnimal(zooRepository.save(buildEntity(animal)));
   }
 
-  private AnimalEntity buildEntity(AnimalDto animalDto) {
+  private AnimalEntity buildEntity(Animal animal) {
     return AnimalEntity
         .builder()
-        .id(animalDto.getId())
-        .name(animalDto.getName())
-        .age(animalDto.getAge())
-        .category(animalDto.getCategory())
+        .id(animal.getId())
+        .name(animal.getName())
+        .age(animal.getAge())
+        .category(animal.getCategory())
         .build();
   }
 
-  private AnimalDto buildDto(AnimalEntity animalEntity) {
-    return AnimalDto.builder()
+  private Animal buildAnimal(AnimalEntity animalEntity) {
+    return Animal.builder()
         .id(animalEntity.getId())
         .name(animalEntity.getName())
         .age(animalEntity.getAge())

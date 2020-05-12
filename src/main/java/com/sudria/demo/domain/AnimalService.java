@@ -1,6 +1,5 @@
 package com.sudria.demo.domain;
 
-import com.sudria.demo.application.AnimalDto;
 import com.sudria.demo.infrastructure.AnimalDao;
 import java.util.List;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,32 +15,32 @@ public class AnimalService {
     this.animalDao = animalDao;
   }
 
-  public List<AnimalDto> getAnimals() {
+  public List<Animal> getAnimals() {
     return animalDao.findAnimals();
   }
 
   @Cacheable("animals")
-  public AnimalDto getAnimals(Long id) throws NotFoundException {
+  public Animal getAnimals(Long id) throws NotFoundException {
     return animalDao.findAnimals(id);
   }
 
-  public AnimalDto addAnimal(AnimalDto animalDto) {
-    return animalDao.createAnimals(animalDto);
+  public Animal addAnimal(Animal animal) {
+    return animalDao.createAnimals(animal);
   }
 
   public void deleteAnimals(Long id) {
     animalDao.deleteAnimals(id);
   }
 
-  public void patchAnimals(AnimalDto animalDto) {
-    animalDao.updateAnimal( animalDto);
+  public void patchAnimals(Animal animal) {
+    animalDao.updateAnimal(animal);
   }
 
-  public AnimalDto findAnimal(Long id) throws NotFoundException {
-   return  animalDao.findAnimals(id);
+  public Animal findAnimal(Long id) throws NotFoundException {
+    return animalDao.findAnimals(id);
   }
 
-  public AnimalDto replaceAnimal(AnimalDto animalDto) {
-    return animalDao.replaceAnimal(animalDto);
+  public Animal replaceAnimal(Animal animal) {
+    return animalDao.replaceAnimal(animal);
   }
 }

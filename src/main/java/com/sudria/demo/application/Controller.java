@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import com.sudria.demo.domain.Animal;
 import com.sudria.demo.domain.AnimalService;
-import io.swagger.annotations.ApiParam;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -33,12 +33,12 @@ public class Controller {
   }
 
   @RequestMapping(value = "/animals", method = RequestMethod.GET)
-  public ResponseEntity<List<AnimalDto>> getAnimals() {
+  public ResponseEntity<List<Animal>> getAnimals() {
     return new ResponseEntity<>(animalService.getAnimals(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/animals/{id}", method = RequestMethod.GET)
-  public ResponseEntity<AnimalDto> getAnimalsById( @PathVariable(value = "id") Long id) {
+  public ResponseEntity<Animal> getAnimalsById( @PathVariable(value = "id") Long id) {
     try {
       return new ResponseEntity<>(animalService.getAnimals(id), HttpStatus.OK);
     } catch (NotFoundException e) {
@@ -47,25 +47,24 @@ public class Controller {
   }
 
   @RequestMapping(value = "/animals", method = RequestMethod.POST)
-  public ResponseEntity<AnimalDto> createAnimals(
-      @ApiParam(value = "Animal object store in database table", required = true)
-      @RequestBody AnimalDto animalDto) {
-    animalService.addAnimal(animalDto);
-    return new ResponseEntity<>(animalDto, HttpStatus.CREATED);
+  public ResponseEntity<Animal> createAnimals(
+      @RequestBody Animal animal) {
+    animalService.addAnimal(animal);
+    return new ResponseEntity<>(animal, HttpStatus.CREATED);
   }
 
   @RequestMapping(value = "/animals/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<AnimalDto> replaceAnimals(
+  public ResponseEntity<Animal> replaceAnimals(
       @PathVariable(value = "id") Long id,
-      @RequestBody AnimalDto animalDto) {
-    animalDto.setId(id);
-    animalService.replaceAnimal(animalDto);
-    return new ResponseEntity<>(animalDto, HttpStatus.OK);
+      @RequestBody Animal animal) {
+    animal.setId(id);
+    animalService.replaceAnimal(animal);
+    return new ResponseEntity<>(animal, HttpStatus.OK);
   }
 
 
   @RequestMapping(value = "/animals/{id}", method = RequestMethod.DELETE)
-  public ResponseEntity<AnimalDto> deleteAnimals(@PathVariable(value = "id") Long id) {
+  public ResponseEntity<Animal> deleteAnimals(@PathVariable(value = "id") Long id) {
     animalService.deleteAnimals(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -84,9 +83,9 @@ public class Controller {
     }
   }
 
-  private AnimalDto applyPatchToCustomer(JsonPatch patch, AnimalDto targetAnimal)
+  private Animal applyPatchToCustomer(JsonPatch patch, Animal targetAnimal)
       throws JsonPatchException, JsonProcessingException {
     JsonNode patched = patch.apply(objectMapper.convertValue(targetAnimal, JsonNode.class));
-    return objectMapper.treeToValue(patched, AnimalDto.class);
+    return objectMapper.treeToValue(patched, Animal.class);
   }
 }
