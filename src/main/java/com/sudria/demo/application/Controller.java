@@ -7,6 +7,10 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.sudria.demo.domain.Animal;
 import com.sudria.demo.domain.AnimalService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -32,6 +36,14 @@ public class Controller {
     this.objectMapper = objectMapper;
   }
 
+
+  @ApiOperation(value = "View a list of available animals", response = List.class)
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "Successfully retrieved list"),
+      @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+      @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+      @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+  })
   @RequestMapping(value = "/animals", method = RequestMethod.GET)
   public ResponseEntity<List<Animal>> getAnimals() {
     return new ResponseEntity<>(animalService.getAnimals(), HttpStatus.OK);
@@ -48,6 +60,7 @@ public class Controller {
 
   @RequestMapping(value = "/animals", method = RequestMethod.POST)
   public ResponseEntity<Animal> createAnimals(
+      @ApiParam(value = "Animal object store in database table", required = true)
       @RequestBody Animal animal) {
     animalService.addAnimal(animal);
     return new ResponseEntity<>(animal, HttpStatus.CREATED);
@@ -61,7 +74,6 @@ public class Controller {
     animalService.replaceAnimal(animal);
     return new ResponseEntity<>(animal, HttpStatus.OK);
   }
-
 
   @RequestMapping(value = "/animals/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<Animal> deleteAnimals(@PathVariable(value = "id") Long id) {

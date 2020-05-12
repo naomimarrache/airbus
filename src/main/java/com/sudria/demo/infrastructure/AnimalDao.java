@@ -1,6 +1,7 @@
 package com.sudria.demo.infrastructure;
 
 import com.sudria.demo.domain.Animal;
+import com.sudria.demo.domain.Animal.Food;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class AnimalDao {
 
   private ZooRepository zooRepository;
+  private FoodRepository foodRepository;
 
   public AnimalDao(ZooRepository zooRepository) {
     this.zooRepository = zooRepository;
@@ -35,7 +37,19 @@ public class AnimalDao {
   }
 
   public void updateAnimal(Animal animal) {
-    zooRepository.save(buildEntity(animal));
+
+    AnimalEntity animalEntity = zooRepository.save(buildEntity(animal));
+
+    animal
+        .getFoods()
+        .stream()
+        .forEach(food ->
+            foodRepository.save(FoodEntity.builder()
+            .category(food.getCategory())
+            .frequency(food.getFrequency())
+            .quantity(food.getQuantity())
+                .animalEntity(animalEntity)
+            .build()));
   }
 
   public Animal replaceAnimal(Animal animal) {
@@ -49,6 +63,16 @@ public class AnimalDao {
         .name(animal.getName())
         .age(animal.getAge())
         .category(animal.getCategory())
+        .foodEntities(
+            animal
+                .getFoods()
+                .stream()
+                .map(food -> FoodEntity.builder()
+                    .category(food.getCategory())
+                    .frequency(food.getFrequency())
+                    .quantity(food.getQuantity())
+                    .build())
+                .collect(Collectors.toList()))
         .build();
   }
 
@@ -58,6 +82,18 @@ public class AnimalDao {
         .name(animalEntity.getName())
         .age(animalEntity.getAge())
         .category(animalEntity.getCategory())
+        .foods(
+            animalEntity
+                .getFoodEntities()
+                .stream()
+                .map(foodEntity -> Food.builder()
+                    .id(foodEntity.getId())
+                    .category(foodEntity.getCategory())
+                    .frequency(foodEntity.getFrequency())
+                    .quantity(foodEntity.getQuantity())
+                    .build())
+                .collect(Collectors.toList())
+                )
         .build();
   }
 
