@@ -22,11 +22,12 @@ import java.util.Map;
 public class GraphqlController {
     private GraphQL graphQL;
 
+    
 
-    public GraphqlController(AnimalResolver animalResolver) {
+    public GraphqlController(AvionResolver avionResolver) {
         GraphQLSchema schema = new GraphQLSchemaGenerator() // déclaration schema
 //        .withBasePackages("com.sudria.demo.graphql")
-                .withOperationsFromSingletons(animalResolver)
+                .withOperationsFromSingletons(avionResolver)
                 .generate();
         graphQL = GraphQL.newGraphQL(schema).build();
         log.info("Generated GraphQL schema using SPQR");

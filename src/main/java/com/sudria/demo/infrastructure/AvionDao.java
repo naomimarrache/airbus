@@ -1,46 +1,47 @@
 package com.sudria.demo.infrastructure;
 
-import com.sudria.demo.domain.Animal;
-import com.sudria.demo.domain.Animal.Food;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import com.sudria.demo.domain.Avion;
+import com.sudria.demo.domain.Avion.Food;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
-public class AnimalDao {
+public class AvionDao {
 
   private ZooRepository zooRepository;
   private FoodRepository foodRepository;
 
-  public AnimalDao(ZooRepository zooRepository) {
+  public AvionDao(ZooRepository zooRepository) {
     this.zooRepository = zooRepository;
   }
 
-  public List<Animal> findAnimals() {
+  public List<Avion> findAvions() {
     return StreamSupport.stream(zooRepository.findAll().spliterator(), false)
-        .map(animalEntitie -> buildAnimal(animalEntitie))
+        .map(avionEntitie -> buildAvion(avionEntitie))
         .collect(Collectors.toList());
   }
 
-  public Animal findAnimals(Long id) throws NotFoundException {
-    return buildAnimal(zooRepository.findById(id).orElseThrow(NotFoundException::new));
+  public Avion findAvions(Long id) throws NotFoundException {
+    return buildAvion(zooRepository.findById(id).orElseThrow(NotFoundException::new));
   }
 
-  public Animal createAnimals(Animal animal) {
-    return buildAnimal(zooRepository.save(buildEntity(animal)));
+  public Avion createAvions(Avion avion) {
+    return buildAvion(zooRepository.save(buildEntity(avion)));
   }
 
-  public void deleteAnimals(Long id) {
+  public void deleteAvions(Long id) {
     zooRepository.delete(zooRepository.findById(id).get());
   }
 
-  public void updateAnimal(Animal animal) {
+  public void updateAvion(Avion avion) {
 
-    AnimalEntity animalEntity = zooRepository.save(buildEntity(animal));
+    AvionEntity avionEntity = zooRepository.save(buildEntity(avion));
 
-    animal
+    avion
         .getFoods()
         .stream()
         .forEach(food ->
@@ -48,23 +49,23 @@ public class AnimalDao {
             .category(food.getCategory())
             .frequency(food.getFrequency())
             .quantity(food.getQuantity())
-                .animalEntity(animalEntity)
+                .avionEntity(avionEntity)
             .build()));
   }
 
-  public Animal replaceAnimal(Animal animal) {
-    return buildAnimal(zooRepository.save(buildEntity(animal)));
+  public Avion replaceAvion(Avion avion) {
+    return buildAvion(zooRepository.save(buildEntity(avion)));
   }
 
-  private AnimalEntity buildEntity(Animal animal) {
-    return AnimalEntity
+  private AvionEntity buildEntity(Avion avion) {
+    return AvionEntity
         .builder()
-        .id(animal.getId())
-        .name(animal.getName())
-        .age(animal.getAge())
-        .category(animal.getCategory())
+        .id(avion.getId())
+        .version(avion.getVersion())
+        .longueur(avion.getLongueur())
+        .famille(avion.getFamille())
         .foodEntities(
-            animal
+            avion
                 .getFoods()
                 .stream()
                 .map(food -> FoodEntity.builder()
@@ -76,14 +77,14 @@ public class AnimalDao {
         .build();
   }
 
-  private Animal buildAnimal(AnimalEntity animalEntity) {
-    return Animal.builder()
-        .id(animalEntity.getId())
-        .name(animalEntity.getName())
-        .age(animalEntity.getAge())
-        .category(animalEntity.getCategory())
+  private Avion buildAvion(AvionEntity avionEntity) {
+    return Avion.builder()
+        .id(avionEntity.getId())
+        .version(avionEntity.getVersion())
+        .longueur(avionEntity.getLongueur())
+        .famille(avionEntity.getFamille())
         .foods(
-            animalEntity
+            avionEntity
                 .getFoodEntities()
                 .stream()
                 .map(foodEntity -> Food.builder()

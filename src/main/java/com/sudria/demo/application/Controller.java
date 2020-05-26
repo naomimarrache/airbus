@@ -5,88 +5,85 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import com.sudria.demo.domain.Animal;
-import com.sudria.demo.domain.AnimalService;
+import com.sudria.demo.domain.Avion;
+import com.sudria.demo.domain.AvionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/v1")
 public class Controller {
 
-  private AnimalService animalService;
+  private AvionService avionService;
   private ObjectMapper objectMapper;
 
-  public Controller(AnimalService animalService, ObjectMapper objectMapper) {
-    this.animalService = animalService;
+  public Controller(AvionService avionService, ObjectMapper objectMapper) {
+    this.avionService = avionService;
     this.objectMapper = objectMapper;
   }
 
 
-  @ApiOperation(value = "View a list of available animals", response = List.class)
+  @ApiOperation(value = "View a list of available avions", response = List.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Successfully retrieved list"),
       @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
       @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
   })
-  @RequestMapping(value = "/animals", method = RequestMethod.GET)
-  public ResponseEntity<List<Animal>> getAnimals() {
-    return new ResponseEntity<>(animalService.getAnimals(), HttpStatus.OK);
+  @RequestMapping(value = "/avions", method = RequestMethod.GET)
+  public ResponseEntity<List<Avion>> getAvions() {
+    return new ResponseEntity<>(avionService.getAvions(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/animals/{id}", method = RequestMethod.GET)
-  public ResponseEntity<Animal> getAnimalsById( @PathVariable(value = "id") Long id) {
+  @RequestMapping(value = "/avions/{id}", method = RequestMethod.GET)
+  public ResponseEntity<Avion> getAvionsById( @PathVariable(value = "id") Long id) {
     try {
-      return new ResponseEntity<>(animalService.getAnimals(id), HttpStatus.OK);
+      return new ResponseEntity<>(avionService.getAvions(id), HttpStatus.OK);
     } catch (NotFoundException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal Not Found", e);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Avion Not Found", e);
     }
   }
 
-  @RequestMapping(value = "/animals", method = RequestMethod.POST)
-  public ResponseEntity<Animal> createAnimals(
-      @ApiParam(value = "Animal object store in database table", required = true)
-      @RequestBody Animal animal) {
-    animalService.addAnimal(animal);
-    return new ResponseEntity<>(animal, HttpStatus.CREATED);
+  @RequestMapping(value = "/avions", method = RequestMethod.POST)
+  public ResponseEntity<Avion> createAvions(
+      @ApiParam(value = "Avion object store in database table", required = true)
+      @RequestBody Avion avion) {
+    avionService.addAvion(avion);
+    return new ResponseEntity<>(avion, HttpStatus.CREATED);
   }
 
-  @RequestMapping(value = "/animals/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Animal> replaceAnimals(
+  @RequestMapping(value = "/avions/{id}", method = RequestMethod.PUT)
+  public ResponseEntity<Avion> replaceAvions(
       @PathVariable(value = "id") Long id,
-      @RequestBody Animal animal) {
-    animal.setId(id);
-    animalService.replaceAnimal(animal);
-    return new ResponseEntity<>(animal, HttpStatus.OK);
+      @RequestBody Avion avion) {
+    avion.setId(id);
+    avionService.replaceAvion(avion);
+    return new ResponseEntity<>(avion, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/animals/{id}", method = RequestMethod.DELETE)
-  public ResponseEntity<Animal> deleteAnimals(@PathVariable(value = "id") Long id) {
-    animalService.deleteAnimals(id);
+  @RequestMapping(value = "/avions/{id}", method = RequestMethod.DELETE)
+  public ResponseEntity<Avion> deleteAvions(@PathVariable(value = "id") Long id) {
+    avionService.deleteAvions(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/animals/{id}", method = RequestMethod.PATCH, consumes = "application/json-patch+json")
-  public ResponseEntity<String> patchAnimals(
+  @RequestMapping(value = "/avions/{id}", method = RequestMethod.PATCH, consumes = "application/json-patch+json")
+  public ResponseEntity<String> patchAvions(
       @PathVariable(value = "id") Long id,
       @RequestBody JsonPatch patch)  {
     try {
-      animalService.patchAnimals(applyPatchToCustomer(patch, animalService.findAnimal(id)));
+      avionService.patchAvions(applyPatchToCustomer(patch, avionService.findAvion(id)));
       return new ResponseEntity<>(HttpStatus.OK);
     } catch (NotFoundException e) {
       return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -95,9 +92,9 @@ public class Controller {
     }
   }
 
-  private Animal applyPatchToCustomer(JsonPatch patch, Animal targetAnimal)
+  private Avion applyPatchToCustomer(JsonPatch patch, Avion targetAvion)
       throws JsonPatchException, JsonProcessingException {
-    JsonNode patched = patch.apply(objectMapper.convertValue(targetAnimal, JsonNode.class));
-    return objectMapper.treeToValue(patched, Animal.class);
+    JsonNode patched = patch.apply(objectMapper.convertValue(targetAvion, JsonNode.class));
+    return objectMapper.treeToValue(patched, Avion.class);
   }
 }
