@@ -1,7 +1,7 @@
 package com.sudria.demo.infrastructure;
 
 import com.sudria.demo.domain.Avion;
-import com.sudria.demo.domain.Avion.Food;
+import com.sudria.demo.domain.Avion.Achat;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 public class AvionDao {
 
   private ZooRepository zooRepository;
-  private FoodRepository foodRepository;
+  private AchatRepository achatRepository;
 
   public AvionDao(ZooRepository zooRepository) {
     this.zooRepository = zooRepository;
@@ -42,13 +42,13 @@ public class AvionDao {
     AvionEntity avionEntity = zooRepository.save(buildEntity(avion));
 
     avion
-        .getFoods()
+        .getAchats()
         .stream()
-        .forEach(food ->
-            foodRepository.save(FoodEntity.builder()
-            .category(food.getCategory())
-            .frequency(food.getFrequency())
-            .quantity(food.getQuantity())
+        .forEach(achat ->
+            achatRepository.save(AchatEntity.builder()
+            .compagny(achat.getCompagny())
+            .price(achat.getPrice())
+            .quantity(achat.getQuantity())
                 .avionEntity(avionEntity)
             .build()));
   }
@@ -64,14 +64,14 @@ public class AvionDao {
         .version(avion.getVersion())
         .longueur(avion.getLongueur())
         .famille(avion.getFamille())
-        .foodEntities(
+        .achatEntities(
             avion
-                .getFoods()
+                .getAchats()
                 .stream()
-                .map(food -> FoodEntity.builder()
-                    .category(food.getCategory())
-                    .frequency(food.getFrequency())
-                    .quantity(food.getQuantity())
+                .map(achat -> AchatEntity.builder()
+                    .compagny(achat.getCompagny())
+                    .price(achat.getPrice())
+                    .quantity(achat.getQuantity())
                     .build())
                 .collect(Collectors.toList()))
         .build();
@@ -83,15 +83,15 @@ public class AvionDao {
         .version(avionEntity.getVersion())
         .longueur(avionEntity.getLongueur())
         .famille(avionEntity.getFamille())
-        .foods(
+        .achats(
             avionEntity
-                .getFoodEntities()
+                .getAchatEntities()
                 .stream()
-                .map(foodEntity -> Food.builder()
-                    .id(foodEntity.getId())
-                    .category(foodEntity.getCategory())
-                    .frequency(foodEntity.getFrequency())
-                    .quantity(foodEntity.getQuantity())
+                .map(achatEntity -> Achat.builder()
+                    .id(achatEntity.getId())
+                    .compagny(achatEntity.getCompagny())
+                    .price(achatEntity.getPrice())
+                    .quantity(achatEntity.getQuantity())
                     .build())
                 .collect(Collectors.toList())
                 )

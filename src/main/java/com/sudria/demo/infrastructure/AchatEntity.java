@@ -12,17 +12,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class FoodEntity {
+public class AchatEntity {
 
   @Id
   @GeneratedValue
   private Long id;
-  @Column(name = "FREQUENCY", length = 50, nullable = false)
-  private int frequency;
+  @Column(name = "PRICE", length = 50, nullable = false)
+  private int price;
   @Column(name = "QUANTITY", nullable = false)
   private int quantity;
-  @Column(name = "CATEGORY", length = 50, nullable = false)
-  private String category;
+  @Column(name = "COMPAGNY", length = 50, nullable = false)
+  private String compagny;
 
 
   @ManyToOne

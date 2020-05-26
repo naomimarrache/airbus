@@ -17,7 +17,7 @@ public class Avion {
   private String version;
   private int longueur;
   private String famille;
-  private List<Food> foods;
+  private List<Achat> achats;
 
   @Getter
   @ToString
@@ -25,12 +25,12 @@ public class Avion {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class Food {
+  public static class Achat {
 
     private Long id;
-    private int frequency;
+    private int price;
     private int quantity;
-    private String category;
+    private String compagny;
 
   }
 

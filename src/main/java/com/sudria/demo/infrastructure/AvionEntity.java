@@ -26,6 +26,6 @@ public class AvionEntity {
   private String famille;
 
   @OneToMany(mappedBy = "avionEntity", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.EAGER)
-  private List<FoodEntity> foodEntities;
+  private List<AchatEntity> achatEntities;
 
 }

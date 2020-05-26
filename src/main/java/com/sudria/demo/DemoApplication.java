@@ -1,9 +1,9 @@
 package com.sudria.demo;
 
-import com.sudria.demo.domain.Avion.Food;
+import com.sudria.demo.domain.Avion.Achat;
+import com.sudria.demo.infrastructure.AchatEntity;
+import com.sudria.demo.infrastructure.AchatRepository;
 import com.sudria.demo.infrastructure.AvionEntity;
-import com.sudria.demo.infrastructure.FoodEntity;
-import com.sudria.demo.infrastructure.FoodRepository;
 import com.sudria.demo.infrastructure.ZooRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -21,11 +21,11 @@ public class DemoApplication implements CommandLineRunner {
   //  @Autowired
   private ZooRepository zooRepository;
   //  @Autowired
-  private FoodRepository foodRepository;
+  private AchatRepository achatRepository;
 
-  public DemoApplication(ZooRepository zooRepository, FoodRepository foodRepository) {
+  public DemoApplication(ZooRepository zooRepository, AchatRepository achatRepository) {
     this.zooRepository = zooRepository;
-    this.foodRepository = foodRepository;
+    this.achatRepository = achatRepository;
   }
 
   public static void main(String[] args) {
@@ -38,12 +38,12 @@ public class DemoApplication implements CommandLineRunner {
   public void run(String... args) {
 
     log.info("Data initilisation...");
-    saveAvion(1L, "A300B1", 50, "A300", Arrays.asList(Food.builder().frequency(2).category("meat").build()));
-    saveAvion(2L, "A310-200", 47, "A310", Arrays.asList(Food.builder().frequency(1).category("algue").build()));
+    saveAvion(1L, "A300B1", 50, "A300", Arrays.asList(Achat.builder().price(15000000).compagny("AirFrance").build()));
+    saveAvion(2L, "A310-200", 47, "A310", Arrays.asList(Achat.builder().price(7600000).compagny("EasyJet").build()));
   }
 
   @Transactional
-  private void saveAvion(long id, String version, int longueur, String famille, List<Food> foods) {
+  private void saveAvion(long id, String version, int longueur, String famille, List<Achat> achats) {
 
 
     AvionEntity avionEntity = this.zooRepository.save(
@@ -55,14 +55,14 @@ public class DemoApplication implements CommandLineRunner {
             .famille(famille)
             .build());
 
-    foods.stream()
-        .forEach(food ->
-            foodRepository.save(
-                FoodEntity
+    achats.stream()
+        .forEach(achat ->
+            achatRepository.save(
+                AchatEntity
                     .builder()
-                    .category(food.getCategory())
-                    .frequency(food.getFrequency())
-                    .quantity(food.getQuantity())
+                    .compagny(achat.getCompagny())
+                    .price(achat.getPrice())
+                    .quantity(achat.getQuantity())
                     .avionEntity(avionEntity)
                     .build()
             ));
