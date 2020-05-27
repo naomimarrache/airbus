@@ -3,8 +3,8 @@ package com.sudria.demo;
 import com.sudria.demo.domain.Avion.Achat;
 import com.sudria.demo.infrastructure.AchatEntity;
 import com.sudria.demo.infrastructure.AchatRepository;
+import com.sudria.demo.infrastructure.AirbusRepository;
 import com.sudria.demo.infrastructure.AvionEntity;
-import com.sudria.demo.infrastructure.ZooRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,12 +19,12 @@ import java.util.List;
 public class DemoApplication implements CommandLineRunner {
 
   //  @Autowired
-  private ZooRepository zooRepository;
+  private AirbusRepository airbusRepository;
   //  @Autowired
   private AchatRepository achatRepository;
 
-  public DemoApplication(ZooRepository zooRepository, AchatRepository achatRepository) {
-    this.zooRepository = zooRepository;
+  public DemoApplication(AirbusRepository airbusRepository, AchatRepository achatRepository) {
+    this.airbusRepository = airbusRepository;
     this.achatRepository = achatRepository;
   }
 
@@ -35,18 +35,18 @@ public class DemoApplication implements CommandLineRunner {
   }
 
   @Override
-  public void run(String... args) {
+  public void run(String[] args) {
 
     log.info("Data initilisation...");
-    saveAvion(1L, "A300B1", 50, "A300", Arrays.asList(Achat.builder().price(15000000).compagny("AirFrance").build()));
-    saveAvion(2L, "A310-200", 47, "A310", Arrays.asList(Achat.builder().price(7600000).compagny("EasyJet").build()));
+    saveAvion(1L, "A300B1", 50, "A300", Arrays.asList(Achat.builder().price(15000000).compagny("AirFrance").quantity(3).build()));
+    saveAvion(2L, "A310-200", 47, "A310", Arrays.asList(Achat.builder().price(7600000).compagny("EasyJet").quantity(7).build(),Achat.builder().price(7600000).compagny("EasyJet").quantity(7).build(),Achat.builder().price(4668800).compagny("AlItalia").quantity(9).build()));
   }
 
   @Transactional
   private void saveAvion(long id, String version, int longueur, String famille, List<Achat> achats) {
 
 
-    AvionEntity avionEntity = this.zooRepository.save(
+    AvionEntity avionEntity = this.airbusRepository.save(
         AvionEntity
             .builder()
             .id(id)

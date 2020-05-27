@@ -12,34 +12,34 @@ import java.util.stream.StreamSupport;
 @Service
 public class AvionDao {
 
-  private ZooRepository zooRepository;
+  private AirbusRepository airbusRepository;
   private AchatRepository achatRepository;
 
-  public AvionDao(ZooRepository zooRepository) {
-    this.zooRepository = zooRepository;
+  public AvionDao(AirbusRepository airbusRepository) {
+    this.airbusRepository = airbusRepository;
   }
 
   public List<Avion> findAvions() {
-    return StreamSupport.stream(zooRepository.findAll().spliterator(), false)
+    return StreamSupport.stream(airbusRepository.findAll().spliterator(), false)
         .map(avionEntitie -> buildAvion(avionEntitie))
         .collect(Collectors.toList());
   }
 
   public Avion findAvions(Long id) throws NotFoundException {
-    return buildAvion(zooRepository.findById(id).orElseThrow(NotFoundException::new));
+    return buildAvion(airbusRepository.findById(id).orElseThrow(NotFoundException::new));
   }
 
   public Avion createAvions(Avion avion) {
-    return buildAvion(zooRepository.save(buildEntity(avion)));
+    return buildAvion(airbusRepository.save(buildEntity(avion)));
   }
 
   public void deleteAvions(Long id) {
-    zooRepository.delete(zooRepository.findById(id).get());
+    airbusRepository.delete(airbusRepository.findById(id).get());
   }
 
   public void updateAvion(Avion avion) {
 
-    AvionEntity avionEntity = zooRepository.save(buildEntity(avion));
+    AvionEntity avionEntity = airbusRepository.save(buildEntity(avion));
 
     avion
         .getAchats()
@@ -54,7 +54,7 @@ public class AvionDao {
   }
 
   public Avion replaceAvion(Avion avion) {
-    return buildAvion(zooRepository.save(buildEntity(avion)));
+    return buildAvion(airbusRepository.save(buildEntity(avion)));
   }
 
   private AvionEntity buildEntity(Avion avion) {
