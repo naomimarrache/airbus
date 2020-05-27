@@ -9,11 +9,11 @@ import lombok.ToString;
 @Builder
 public class Supervisor {
 
-  private Long identifiant;
+  private Long id;
   private String firstname;
   private String lastname;
   private int age;
-  private String phoneNumber;
-  private String emailAdsress;
+  private String phone;
+  private String email;
 
 }
