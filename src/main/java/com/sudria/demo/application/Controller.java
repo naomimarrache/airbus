@@ -42,11 +42,13 @@ public class Controller {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
   })
   @RequestMapping(value = "/avions", method = RequestMethod.GET)
+  @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<List<Avion>> getAvions() {
     return new ResponseEntity<>(avionService.getAvions(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/avions/{id}", method = RequestMethod.GET)
+  @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<Avion> getAvionsById( @PathVariable(value = "id") Long id) {
     try {
       return new ResponseEntity<>(avionService.getAvions(id), HttpStatus.OK);
@@ -56,6 +58,7 @@ public class Controller {
   }
 
   @RequestMapping(value = "/avions", method = RequestMethod.POST)
+  @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<Avion> createAvions(
       @ApiParam(value = "Avion object store in database table", required = true)
       @RequestBody Avion avion) {
@@ -73,6 +76,7 @@ public class Controller {
   }
 
   @RequestMapping(value = "/avions/{id}", method = RequestMethod.DELETE)
+  @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<Avion> deleteAvions(@PathVariable(value = "id") Long id) {
     avionService.deleteAvions(id);
     return new ResponseEntity<>(HttpStatus.OK);
