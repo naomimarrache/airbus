@@ -1,7 +1,7 @@
 package com.sudria.demo.application.graphql;
 
-import com.sudria.demo.domain.Avion;
-import com.sudria.demo.domain.AvionService;
+import com.sudria.demo.domain.avion.Avion;
+import com.sudria.demo.domain.avion.AvionService;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import org.springframework.stereotype.Component;
 

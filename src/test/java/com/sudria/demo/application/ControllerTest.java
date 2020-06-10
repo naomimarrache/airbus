@@ -22,7 +22,7 @@ public class ControllerTest {
 
 
   @Autowired
-  private Controller controller;
+  private AvionController controller;
 
   @Test
   public void contexLoads() {

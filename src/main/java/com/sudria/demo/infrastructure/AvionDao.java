@@ -1,7 +1,6 @@
 package com.sudria.demo.infrastructure;
 
-import com.sudria.demo.domain.Avion;
-import com.sudria.demo.domain.Avion.Achat;
+import com.sudria.demo.domain.avion.Avion;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -12,91 +11,67 @@ import java.util.stream.StreamSupport;
 @Service
 public class AvionDao {
 
-  private AirbusRepository airbusRepository;
+  private AvionRepository avionRepository;
   private AchatRepository achatRepository;
 
-  public AvionDao(AirbusRepository airbusRepository) {
-    this.airbusRepository = airbusRepository;
+  public AvionDao(AvionRepository avionRepository, AchatRepository achatRepository) {
+    this.avionRepository = avionRepository;
+    this.achatRepository = achatRepository;
   }
 
   public List<Avion> findAvions() {
-    return StreamSupport.stream(airbusRepository.findAll().spliterator(), false)
-        .map(avionEntitie -> buildAvion(avionEntitie))
-        .collect(Collectors.toList());
+    return StreamSupport.stream(avionRepository.findAll().spliterator(), false)
+            .map(avionEntitie -> buildAvion(avionEntitie, achatRepository.findByAvionEntity(avionEntitie)))
+            .collect(Collectors.toList());
   }
 
   public Avion findAvions(Long id) throws NotFoundException {
-    return buildAvion(airbusRepository.findById(id).orElseThrow(NotFoundException::new));
+    AvionEntity avionEntity = avionRepository.findById(id).orElseThrow(NotFoundException::new);
+    return buildAvion(avionEntity, achatRepository.findByAvionEntity(avionEntity));
   }
 
-  public Avion createAvions(Avion avion) {
-    return buildAvion(airbusRepository.save(buildEntity(avion)));
+  public Avion createAvions(Avion avion) throws NotFoundException {
+    AvionEntity avionEntity = avionRepository.save(buildAvionEntity(avion));
+    return buildAvion(
+            avionRepository.findById(avionEntity.getId()).orElseThrow(NotFoundException::new),
+            achatRepository.findByAvionEntity(avionEntity));
   }
+
 
   public void deleteAvions(Long id) {
-    airbusRepository.delete(airbusRepository.findById(id).get());
+    avionRepository.delete(avionRepository.findById(id).get());
   }
 
-  public void updateAvion(Avion avion) {
-
-    AvionEntity avionEntity = airbusRepository.save(buildEntity(avion));
-
-    avion
-        .getAchats()
-        .stream()
-        .forEach(achat ->
-            achatRepository.save(AchatEntity.builder()
-            .compagny(achat.getCompagny())
-            .price(achat.getPrice())
-            .quantity(achat.getQuantity())
-                .avionEntity(avionEntity)
-            .build()));
+  public Avion updateAvion(Avion avion) {
+    return buildAvion(avionRepository.save(buildAvionEntity(avion)),
+            achatRepository.findByAvionEntityId(avion.getId()));
   }
+
 
   public Avion replaceAvion(Avion avion) {
-    return buildAvion(airbusRepository.save(buildEntity(avion)));
+    AvionEntity avionEntity = avionRepository.save(buildAvionEntity(avion));
+    return buildAvion(avionEntity, achatRepository.findByAvionEntity(avionEntity));
   }
 
-  private AvionEntity buildEntity(Avion avion) {
+  private AvionEntity buildAvionEntity(Avion avion) {
     return AvionEntity
-        .builder()
-        .id(avion.getId())
-        .version(avion.getVersion())
-        .longueur(avion.getLongueur())
-        .famille(avion.getFamille())
-        .achatEntities(
-            avion
-                .getAchats()
-                .stream()
-                .map(achat -> AchatEntity.builder()
-                    .compagny(achat.getCompagny())
-                    .price(achat.getPrice())
-                    .quantity(achat.getQuantity())
-                    .build())
-                .collect(Collectors.toList()))
-        .build();
+            .builder()
+            .version(avion.getVersion())
+            .longueur(avion.getLongueur())
+            .famille(avion.getFamille())
+            .build();
   }
 
-  private Avion buildAvion(AvionEntity avionEntity) {
+  private Avion buildAvion(AvionEntity avionEntity, List<AchatEntity> achatEntities) {
     return Avion.builder()
-        .id(avionEntity.getId())
-        .version(avionEntity.getVersion())
-        .longueur(avionEntity.getLongueur())
-        .famille(avionEntity.getFamille())
-        .achats(
-            avionEntity
-                .getAchatEntities()
-                .stream()
-                .map(achatEntity -> Achat.builder()
-                    .id(achatEntity.getId())
-                    .compagny(achatEntity.getCompagny())
-                    .price(achatEntity.getPrice())
-                    .quantity(achatEntity.getQuantity())
-                    .build())
-                .collect(Collectors.toList())
-                )
-        .build();
+            .id(avionEntity.getId())
+            .version(avionEntity.getVersion())
+            .longueur(avionEntity.getLongueur())
+            .famille(avionEntity.getFamille())
+            .achats(achatEntities
+                    .stream()
+                    .map(achatEntity -> achatEntity.getId())
+                    .collect(Collectors.toList()))
+            .build();
   }
-
-
 }

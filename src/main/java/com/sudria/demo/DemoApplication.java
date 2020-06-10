@@ -1,6 +1,6 @@
 package com.sudria.demo;
 
-import com.sudria.demo.domain.Avion.Achat;
+import com.sudria.demo.domain.achat.Achat;
 import com.sudria.demo.infrastructure.AchatEntity;
 import com.sudria.demo.infrastructure.AchatRepository;
 import com.sudria.demo.infrastructure.AirbusRepository;

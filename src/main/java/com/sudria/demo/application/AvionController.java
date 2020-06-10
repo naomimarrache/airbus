@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import com.sudria.demo.domain.Avion;
-import com.sudria.demo.domain.AvionService;
+import com.sudria.demo.domain.avion.Avion;
+import com.sudria.demo.domain.avion.AvionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -23,12 +23,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1")
-public class Controller {
+public class AvionController {
 
   private AvionService avionService;
   private ObjectMapper objectMapper;
 
-  public Controller(AvionService avionService, ObjectMapper objectMapper) {
+  public AvionController(AvionService avionService, ObjectMapper objectMapper) {
     this.avionService = avionService;
     this.objectMapper = objectMapper;
   }
@@ -51,6 +51,7 @@ public class Controller {
   @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<Avion> getAvionsById( @PathVariable(value = "id") Long id) {
     try {
+      log.info("********************** inside the controller ****************************");
       return new ResponseEntity<>(avionService.getAvions(id), HttpStatus.OK);
     } catch (NotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Avion Not Found", e);
@@ -61,12 +62,13 @@ public class Controller {
   @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<Avion> createAvions(
       @ApiParam(value = "Avion object store in database table", required = true)
-      @RequestBody Avion avion) {
-    avionService.addAvion(avion);
+      @RequestBody Avion avion) throws NotFoundException {
+    avion = avionService.addAvion(avion);
     return new ResponseEntity<>(avion, HttpStatus.CREATED);
   }
 
   @RequestMapping(value = "/avions/{id}", method = RequestMethod.PUT)
+  @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<Avion> replaceAvions(
       @PathVariable(value = "id") Long id,
       @RequestBody Avion avion) {
@@ -83,6 +85,7 @@ public class Controller {
   }
 
   @RequestMapping(value = "/avions/{id}", method = RequestMethod.PATCH, consumes = "application/json-patch+json")
+  @CrossOrigin(origins = "http://localhost:4200")
   public ResponseEntity<String> patchAvions(
       @PathVariable(value = "id") Long id,
       @RequestBody JsonPatch patch)  {

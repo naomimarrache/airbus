@@ -1,12 +1,14 @@
-package com.sudria.demo.domain;
+package com.sudria.demo.domain.avion;
 
 import com.sudria.demo.infrastructure.AvionDao;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class AvionService {
 
@@ -22,10 +24,11 @@ public class AvionService {
 
   @Cacheable("avions")
   public Avion getAvions(Long id) throws NotFoundException {
+    log.info("********************** inside the AvionService ****************************");
     return avionDao.findAvions(id);
   }
 
-  public Avion addAvion(Avion avion) {
+  public Avion addAvion(Avion avion) throws NotFoundException {
     return avionDao.createAvions(avion);
   }
 
